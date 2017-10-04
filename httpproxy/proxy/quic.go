@@ -36,10 +36,10 @@ func QUIC(network, addr string, auth *Auth, forward Dialer, resolver Resolver) (
 		transport: &h2quic.RoundTripper{
 			DisableCompression: true,
 			QuicConfig: &quic.Config{
-				HandshakeTimeout:              5 * time.Second,
-				IdleTimeout:                   10 * time.Second,
-				RequestConnectionIDTruncation: true,
-				KeepAlive:                     true,
+				HandshakeTimeout:            5 * time.Second,
+				IdleTimeout:                 10 * time.Second,
+				RequestConnectionIDOmission: true,
+				KeepAlive:                   true,
 			},
 			KeepAliveTimeout:      30 * time.Minute,
 			IdleConnTimeout:       5 * time.Minute,
