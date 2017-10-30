@@ -104,9 +104,9 @@ done
 
 echo "1. Checking GoProxy Version"
 if test "${LATEST}" = "false"; then
-	FILENAME=$(curl -k https://github.com/phuslu/goproxy-ci/commits/master | grep -oE "${FILENAME_PREFIX}-r[0-9]+.[0-9a-z\.]+" | head -1)
+	FILENAME=$(curl -k https://github.com/alexhua/goproxy-ci/commits/master | grep -oE "${FILENAME_PREFIX}-r[0-9]+.[0-9a-z\.]+" | head -1)
 else
-	FILENAME=$(curl -kL https://github.com/phuslu/goproxy-ci/releases/latest | grep -oE "${FILENAME_PREFIX}-r[0-9]+.[0-9a-z\.]+" | head -1)
+	FILENAME=$(curl -kL https://github.com/alexhua/goproxy-ci/releases/latest | grep -oE "${FILENAME_PREFIX}-r[0-9]+.[0-9a-z\.]+" | head -1)
 fi
 REMOTEVERSION=$(echo ${FILENAME} | awk -F'.' '{print $1}' | awk -F'-' '{print $2}')
 if test -z "${REMOTEVERSION}"; then
@@ -120,7 +120,7 @@ if expr "${LOCALVERSION#r*}" ">=" "${REMOTEVERSION#r*}" >/dev/null; then
 fi
 
 echo "2. Downloading ${FILENAME}"
-curl -kL https://github.com/phuslu/goproxy-ci/releases/download/${REMOTEVERSION}/${FILENAME} >${FILENAME}.tmp
+curl -kL https://github.com/alexhua/goproxy-ci/releases/download/${REMOTEVERSION}/${FILENAME} >${FILENAME}.tmp
 mv -f ${FILENAME}.tmp ${FILENAME}
 
 echo "3. Extracting ${FILENAME}"

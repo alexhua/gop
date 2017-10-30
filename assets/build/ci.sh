@@ -1,10 +1,10 @@
 #!/bin/bash -xe
 
-export GITHUB_USER=${GITHUB_USER:-phuslu}
-export GITHUB_EMAIL=${GITHUB_EMAIL:-phuslu@hotmail.com}
+export GITHUB_USER=${GITHUB_USER:-alexhua}
+export GITHUB_EMAIL=${GITHUB_EMAIL:-sealexh@gmail.com}
 export GITHUB_REPO=${GITHUB_REPO:-goproxy}
 export GITHUB_CI_REPO=${GITHUB_CI_REPO:-goproxy-ci}
-export GITHUB_COMMIT_ID=${TRAVIS_COMMIT:-${COMMIT_ID:-master}}
+export GITHUB_COMMIT_ID=${TRAVIS_COMMIT:-${COMMIT_ID:-topic}}
 export SOURCEFORGE_USER=${SOURCEFORGE_USER:-${GITHUB_USER}}
 export SOURCEFORGE_REPO=${SOURCEFORGE_REPO:-${GITHUB_REPO}}
 export WORKING_DIR=$(pwd)/${GITHUB_REPO}.${RANDOM:-$$}
@@ -70,7 +70,7 @@ function build_go() {
 		git rebase upstream/master
 	fi
 	bash ./make.bash
-	grep -q 'machine github.com' ~/.netrc && git push -f origin master
+	#grep -q 'machine github.com' ~/.netrc && git push -f origin master
 
 	set +ex
 	echo '================================================================================'
@@ -96,7 +96,7 @@ function build_glog() {
 	git remote add -f upstream https://github.com/golang/glog
 	git rebase upstream/master
 	go build -v
-	grep -q 'machine github.com' ~/.netrc && git push -f origin master
+	#grep -q 'machine github.com' ~/.netrc && git push -f origin master
 
 	popd
 }
@@ -109,7 +109,7 @@ function build_http2() {
 	git remote add -f upstream https://github.com/golang/net
 	git rebase upstream/master
 	go get -x github.com/phuslu/net/http2
-	grep -q 'machine github.com' ~/.netrc && git push -f origin master
+	#grep -q 'machine github.com' ~/.netrc && git push -f origin master
 
 	popd
 }
@@ -136,7 +136,7 @@ function build_quicgo() {
 	git remote add -f upstream https://github.com/lucas-clemente/quic-go
 	git rebase upstream/master
 	go get -v github.com/phuslu/quic-go/h2quic
-	grep -q 'machine github.com' ~/.netrc && git push -f origin master
+	#grep -q 'machine github.com' ~/.netrc && git push -f origin master
 
 	popd
 }
@@ -144,7 +144,7 @@ function build_quicgo() {
 function build_goproxy() {
 	pushd ${WORKING_DIR}
 
-	git clone https://github.com/${GITHUB_USER}/gop ${GITHUB_REPO}
+	git clone https://github.com/${GITHUB_USER}/goproxy ${GITHUB_REPO}
 	cd ${GITHUB_REPO}
 
 	if [ ${TRAVIS_PULL_REQUEST:-false} == "false" ]; then
@@ -283,7 +283,7 @@ function build_goproxy_vps() {
 	git reset --hard origin/server.vps
 	git clean -dfx .
 
-	git clone --branch master https://github.com/phuslu/goproxy $GOPATH/src/github.com/phuslu/goproxy
+	git clone --branch topic https://github.com/alexhua/goproxy $GOPATH/src/github.com/alexhua/goproxy
 	awk 'match($1, /"((github\.com|golang\.org|gopkg\.in)\/.+)"/) {if (!seen[$1]++) {gsub("\"", "", $1); print $1}}' $(find . -name "*.go") | xargs -n1 -i go get -u -v {}
 
 	cat <<EOF |
@@ -315,7 +315,7 @@ function release_github() {
 		exit 1
 	fi
 
-	git clone --branch "master" https://github.com/${GITHUB_USER}/${GITHUB_CI_REPO} ${GITHUB_CI_REPO}
+	git clone --branch "topic" https://github.com/${GITHUB_USER}/${GITHUB_CI_REPO} ${GITHUB_CI_REPO}
 	cd ${GITHUB_CI_REPO}
 
 	git commit --allow-empty -m "release"
@@ -404,8 +404,8 @@ build_quicgo
 build_goproxy
 if [ "x${TRAVIS_EVENT_TYPE}" == "xpush" ]; then
 	build_goproxy_gae
-	build_goproxy_vps
+	#build_goproxy_vps
 	release_github
-	release_sourceforge
+	#release_sourceforge
 	clean
 fi

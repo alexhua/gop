@@ -1,10 +1,12 @@
 build/
 cache/
+.idea/
 *.db
 *.exe
 *.exe~
 *.key
 *.user.json
+*.iml
 addto-startup.vbs
 goproxy.log
 goproxy.log.*.gz

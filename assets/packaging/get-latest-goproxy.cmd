@@ -77,7 +77,7 @@ set remoteversion=
 (
     title 1. Checking GoProxy Version
     echo 1. Checking GoProxy Version
-    cscript /nologo ~gdownload.vbs https://github.com/phuslu/goproxy-ci/commits/master ~goproxy_tag.txt
+    cscript /nologo ~gdownload.vbs https://github.com/alexhua/goproxy-ci/commits/master ~goproxy_tag.txt
 ) && (
     for /f "usebackq tokens=2 delims=-." %%I in (`findstr "%filename_prefix%-r" ~goproxy_tag.txt`) do (
         set remoteversion=%%I
@@ -105,7 +105,7 @@ set filename=!filename_prefix!-!remoteversion!.7z
 (
     title 2. Downloading %filename%
     echo 2. Downloading %filename%
-    cscript /nologo ~gdownload.vbs https://github.com/phuslu/goproxy-ci/releases/download/!remoteversion!/%filename% "~%filename%"
+    cscript /nologo ~gdownload.vbs https://github.com/alexhua/goproxy-ci/releases/download/!remoteversion!/%filename% "~%filename%"
     if not exist "~%filename%" (
         echo Cannot download %filename%
         goto quit

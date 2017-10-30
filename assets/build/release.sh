@@ -2,9 +2,9 @@
 
 set -ex
 
-export GITHUB_USER=${GITHUB_USER:-phuslu}
-export GITHUB_USER_NAME=${GITHUB_USER_NAME:-"Phus Lu"}
-export GITHUB_USER_EMAIL=${GITHUB_USER_EMAIL:-phuslu@hotmail.com}
+export GITHUB_USER=${GITHUB_USER:-alexhua}
+export GITHUB_USER_NAME=${GITHUB_USER_NAME:-"Alex Hua"}
+export GITHUB_USER_EMAIL=${GITHUB_USER_EMAIL:-sealexh@gmail.com}
 export GITHUB_REPO=goproxy
 export GITHUB_CI_REPO=goproxy-ci
 export GITHUB_TAG=${GITHUB_TAG}
@@ -31,13 +31,13 @@ mkdir -p $WORKING_DIR
 pushd ${WORKING_DIR}
 
 if [ -n "${GITHUB_TAG}" ]; then
-RELEASE_URL=https://github.com/phuslu/goproxy-ci/releases/tag/${GITHUB_TAG}
+RELEASE_URL=https://github.com/alexhua/goproxy-ci/releases/tag/${GITHUB_TAG}
 else
-RELEASE_URL=https://github.com/phuslu/goproxy-ci/releases/latest
+RELEASE_URL=https://github.com/alexhua/goproxy-ci/releases/latest
 fi
 
 RELEASE_FILES=$(curl -ksSL ${RELEASE_URL} | grep -oP '(goproxy|source)[^/]*\.(tar|gz|bz2|xz|7z|zip)' | uniq)
-RELEASE_MESSAGE="https://github.com/phuslu/goproxy-ci/releases/tag/$(echo ${RELEASE_FILES} | grep -oP 'r\d\d\d\d' | head -1)"
+RELEASE_MESSAGE="https://github.com/alexhua/goproxy-ci/releases/tag/$(echo ${RELEASE_FILES} | grep -oP 'r\d\d\d\d' | head -1)"
 
 pushd $(mktemp -d -p .)
 git init
