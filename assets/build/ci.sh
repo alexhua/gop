@@ -93,8 +93,10 @@ function build_glog() {
 
 	git clone https://github.com/phuslu/glog $GOPATH/src/github.com/phuslu/glog
 	cd $GOPATH/src/github.com/phuslu/glog
-	git remote add -f upstream https://github.com/golang/glog
-	git rebase upstream/master
+	if [ "${GOTIP_FOLLOW}" = "true" ]; then
+	    git remote add -f upstream https://github.com/golang/glog
+	    git rebase upstream/master
+	fi
 	go build -v
 	#grep -q 'machine github.com' ~/.netrc && git push -f origin master
 
@@ -106,8 +108,10 @@ function build_http2() {
 
 	git clone https://github.com/phuslu/net $GOPATH/src/github.com/phuslu/net
 	cd $GOPATH/src/github.com/phuslu/net/http2
-	git remote add -f upstream https://github.com/golang/net
-	git rebase upstream/master
+	if [ "${GOTIP_FOLLOW}" = "true" ]; then
+	    git remote add -f upstream https://github.com/golang/net
+	    git rebase upstream/master
+	fi
 	go get -x github.com/phuslu/net/http2
 	#grep -q 'machine github.com' ~/.netrc && git push -f origin master
 
@@ -133,8 +137,10 @@ function build_quicgo() {
 
 	git clone https://github.com/phuslu/quic-go $GOPATH/src/github.com/phuslu/quic-go
 	cd $GOPATH/src/github.com/phuslu/quic-go
-	git remote add -f upstream https://github.com/lucas-clemente/quic-go
-	git rebase upstream/master
+	if [ "${GOTIP_FOLLOW}" = "true" ]; then
+	    git remote add -f upstream https://github.com/lucas-clemente/quic-go
+	    git rebase upstream/master
+	fi
 	go get -v github.com/phuslu/quic-go/h2quic
 	#grep -q 'machine github.com' ~/.netrc && git push -f origin master
 
