@@ -26,7 +26,8 @@ extern "C" WINBASEAPI HWND WINAPI GetConsoleWindow();
 #define WM_TASKBARNOTIFY_MENUITEM_RELOAD (WM_USER + 23)
 #define WM_TASKBARNOTIFY_MENUITEM_ABOUT (WM_USER + 24)
 #define WM_TASKBARNOTIFY_MENUITEM_EXIT (WM_USER + 25)
-#define WM_TASKBARNOTIFY_MENUITEM_PROXYLIST_BASE (WM_USER + 26)
+#define WM_TASKBARNOITFY_MENUITEM_GOOGLE_IP (WM_USER + 26)
+#define WM_TASKBARNOTIFY_MENUITEM_PROXYLIST_BASE (WM_USER + 27)
 
 HINSTANCE hInst;
 HWND hWnd;
@@ -281,6 +282,7 @@ BOOL ShowPopupMenu()
     {
         AppendMenu(hMenu, MF_STRING | MF_POPUP, (UINT_PTR)hSubMenu, ( isZHCN ? L"\x8bbe\x7f6e IE \x4ee3\x7406" : L"Set IE Proxy") );
     }
+    AppendMenu(hMenu, MF_STRING, WM_TASKBARNOITFY_MENUITEM_GOOGLE_IP, ( isZHCN ? L"\x5199\x5165\x0049\x0050\x5730\x5740" : L"Inflate Google IP") );
     AppendMenu(hMenu, MF_STRING, WM_TASKBARNOTIFY_MENUITEM_RELOAD, ( isZHCN ? L"\x91cd\x65b0\x8f7d\x5165" : L"Reload") );
     AppendMenu(hMenu, MF_STRING, WM_TASKBARNOTIFY_MENUITEM_EXIT,   ( isZHCN ? L"\x9000\x51fa" : L"Exit") );
     GetCursorPos(&pt);
@@ -483,6 +485,12 @@ BOOL ReloadCmdline()
     return TRUE;
 }
 
+BOOL OpenIpHtml()
+{
+    ShellExecute(0, 0, L"http://127.0.0.1:8087/ip.html", 0, 0 , SW_SHOW );
+    return TRUE;
+}
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     static UINT WM_TASKBARCREATED = 0;
@@ -527,6 +535,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             {
                 DeleteTrayIcon();
                 PostMessage(hConsole, WM_CLOSE, 0, 0);
+            }
+            else if(nID == WM_TASKBARNOITFY_MENUITEM_GOOGLE_IP)
+            {
+                OpenIpHtml();
             }
             else if (WM_TASKBARNOTIFY_MENUITEM_PROXYLIST_BASE <= nID && nID <= WM_TASKBARNOTIFY_MENUITEM_PROXYLIST_BASE+sizeof(lpProxyList)/sizeof(lpProxyList[0]))
             {
