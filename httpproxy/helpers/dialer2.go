@@ -197,7 +197,7 @@ func (d *MultiDialer) dialMultiTLS(network string, hosts []string, port string, 
 			ctx, cancel := context.WithTimeout(context.Background(), d.Timeout)
 			defer cancel()
 
-			conn, err := net.DialTCPContext(ctx, network, nil, raddr)
+			conn, err := net.DialTCPContext(ctx, network, nil, raddr, nil)
 			if err != nil {
 				d.TLSConnDuration.Del(host)
 				d.TLSConnError.Set(host, err, time.Now().Add(d.ErrorConnExpiry))
