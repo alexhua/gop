@@ -44,7 +44,7 @@ func QUIC(network, addr string, auth *Auth, forward Dialer, resolver Resolver) (
 			KeepAliveTimeout:      30 * time.Minute,
 			IdleConnTimeout:       5 * time.Minute,
 			ResponseHeaderTimeout: 5 * time.Second,
-			DialAddr: func(address string, tlsConfig *tls.Config, cfg *quic.Config) (quic.Session, error) {
+			Dial: func(network, address string, tlsConfig *tls.Config, cfg *quic.Config) (quic.Session, error) {
 				return quic.DialAddr(addr, tlsConfig, cfg)
 			},
 			GetClientKey: func(_ string) string {
