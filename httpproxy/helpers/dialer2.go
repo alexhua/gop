@@ -255,7 +255,7 @@ func (d *MultiDialer) dialMultiTLS(network string, hosts []string, port string, 
 	return nil, r.e
 }
 
-func (d *MultiDialer) DialQuic(address string, tlsConfig *tls.Config, cfg *quic.Config) (quic.Session, error) {
+func (d *MultiDialer) DialQuic(network, address string, tlsConfig *tls.Config, cfg *quic.Config) (quic.Session, error) {
 	if d.LogToStderr {
 		SetConsoleTextColorGreen()
 	}

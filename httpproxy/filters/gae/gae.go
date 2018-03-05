@@ -305,11 +305,8 @@ func NewFilter(config *Config) (filters.Filter, error) {
 				RequestConnectionIDOmission: true,
 				KeepAlive:                   true,
 			},
-			DialAddr:              md.DialQuic,
-			KeepAliveTimeout:      2 * time.Minute,
-			IdleConnTimeout:       time.Duration(config.Transport.IdleConnTimeout) * time.Second,
-			ResponseHeaderTimeout: time.Duration(config.Transport.ResponseHeaderTimeout) * time.Second,
-			GetClientKey:          GetHostnameCacheKey,
+			Dial:         md.DialQuic,
+			GetClientKey: GetHostnameCacheKey,
 		}
 	case config.DisableHTTP2 && config.ForceHTTP2:
 		glog.Fatalf("GAE: DisableHTTP2=%v and ForceHTTP2=%v is conflict!", config.DisableHTTP2, config.ForceHTTP2)
