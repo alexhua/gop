@@ -12,10 +12,10 @@ import (
 	"github.com/cloudflare/golibs/lrucache"
 	"github.com/phuslu/glog"
 
-	"../../filters"
-	"../../helpers"
-	"../../proxy"
-	"../../storage"
+	"goproxy/httpproxy/filters"
+	"goproxy/httpproxy/helpers"
+	"goproxy/httpproxy/proxy"
+	"goproxy/httpproxy/storage"
 )
 
 const (

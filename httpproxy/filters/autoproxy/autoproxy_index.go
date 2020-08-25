@@ -12,7 +12,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"../../filters"
+	"goproxy/httpproxy/filters"
 )
 
 func (f *Filter) IndexFilesRoundTrip(ctx context.Context, req *http.Request) (context.Context, *http.Response, error) {

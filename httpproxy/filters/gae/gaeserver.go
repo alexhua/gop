@@ -18,7 +18,7 @@ import (
 
 	"github.com/phuslu/glog"
 
-	"../../helpers"
+	"goproxy/httpproxy/helpers"
 )
 
 type Servers struct {

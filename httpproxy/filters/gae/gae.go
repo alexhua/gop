@@ -22,10 +22,10 @@ import (
 	quic "github.com/phuslu/quic-go"
 	"github.com/phuslu/quic-go/h2quic"
 
-	"../../filters"
-	"../../helpers"
-	"../../proxy"
-	"../../storage"
+	"goproxy/httpproxy/filters"
+	"goproxy/httpproxy/helpers"
+	"goproxy/httpproxy/proxy"
+	"goproxy/httpproxy/storage"
 )
 
 const (

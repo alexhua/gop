@@ -10,9 +10,9 @@ import (
 
 	"github.com/phuslu/glog"
 
-	"../../filters"
-	"../../helpers"
-	"../../storage"
+	"goproxy/httpproxy/filters"
+	"goproxy/httpproxy/helpers"
+	"goproxy/httpproxy/storage"
 )
 
 const (

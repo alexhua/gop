@@ -10,7 +10,7 @@ import (
 	"net/http"
 	"net/url"
 
-	"../../helpers"
+	"goproxy/httpproxy/helpers"
 )
 
 type Server struct {

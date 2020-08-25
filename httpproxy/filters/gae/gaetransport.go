@@ -14,7 +14,7 @@ import (
 	quic "github.com/phuslu/quic-go"
 	"github.com/phuslu/quic-go/h2quic"
 
-	"../../helpers"
+	"goproxy/httpproxy/helpers"
 )
 
 type Transport struct {

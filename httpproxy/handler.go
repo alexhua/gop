@@ -14,8 +14,9 @@ import (
 
 	"github.com/phuslu/glog"
 
-	"./filters"
-	"./helpers"
+	"goproxy/httpproxy/filters"
+
+	"goproxy/httpproxy/helpers"
 )
 
 type Handler struct {

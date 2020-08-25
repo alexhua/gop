@@ -12,8 +12,8 @@ import (
 	"github.com/cloudflare/golibs/lrucache"
 	"github.com/phuslu/glog"
 
-	"../../filters"
-	"../../storage"
+	"goproxy/httpproxy/filters"
+	"goproxy/httpproxy/storage"
 )
 
 const (

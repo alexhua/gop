@@ -11,9 +11,9 @@ import (
 	"github.com/phuslu/glog"
 	"golang.org/x/crypto/ssh"
 
-	"../../filters"
-	"../../helpers"
-	"../../storage"
+	"goproxy/httpproxy/filters"
+	"goproxy/httpproxy/helpers"
+	"goproxy/httpproxy/storage"
 )
 
 const (

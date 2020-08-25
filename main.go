@@ -13,13 +13,13 @@ import (
 
 	"github.com/phuslu/glog"
 
-	"./httpproxy"
-	"./httpproxy/filters"
-	"./httpproxy/helpers"
-	"./httpproxy/storage"
+	"goproxy/httpproxy"
+	"goproxy/httpproxy/filters"
+	"goproxy/httpproxy/helpers"
+	"goproxy/httpproxy/storage"
 
-	"./httpproxy/filters/gae"
-	"./httpproxy/filters/php"
+	"goproxy/httpproxy/filters/gae"
+	"goproxy/httpproxy/filters/php"
 )
 
 var (

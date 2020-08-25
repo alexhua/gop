@@ -15,9 +15,9 @@ import (
 	"github.com/phuslu/glog"
 	"github.com/wangtuanjie/ip17mon"
 
-	"../../filters"
-	"../../helpers"
-	"../../storage"
+	"goproxy/httpproxy/filters"
+	"goproxy/httpproxy/helpers"
+	"goproxy/httpproxy/storage"
 )
 
 const (
