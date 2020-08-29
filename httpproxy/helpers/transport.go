@@ -7,9 +7,9 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/lucas-clemente/quic-go/http3"
 	"github.com/phuslu/glog"
-	"github.com/phuslu/net/http2"
-	"github.com/phuslu/quic-go/h2quic"
+	"golang.org/x/net/http2"
 )
 
 var (
@@ -27,15 +27,15 @@ var (
 )
 
 func CloseConnections(tr http.RoundTripper) {
-	f := func(_ net.Addr) bool { return true }
+	// f := func(_ net.Addr) bool { return true }
 
 	switch tr.(type) {
 	case *http.Transport:
-		tr.(*http.Transport).CloseConnection(f)
+		tr.(*http.Transport).CloseIdleConnections()
 	case *http2.Transport:
-		tr.(*http2.Transport).CloseConnection(f)
-	case *h2quic.RoundTripper:
-		tr.(*h2quic.RoundTripper).CloseConnection(f)
+		tr.(*http2.Transport).CloseIdleConnections()
+	case *http3.RoundTripper:
+		tr.(*http3.RoundTripper).Close()
 	default:
 		glog.Errorf("%T(%v) has not implement CloseConnection method", tr, tr)
 	}
@@ -46,20 +46,20 @@ func CloseConnectionByRemoteHost(tr http.RoundTripper, host string) {
 		host = host1
 	}
 
-	f := func(raddr net.Addr) bool {
-		if host1, _, err := net.SplitHostPort(raddr.String()); err == nil {
-			return host == host1
-		}
-		return false
-	}
+	// f := func(raddr net.Addr) bool {
+	// 	if host1, _, err := net.SplitHostPort(raddr.String()); err == nil {
+	// 		return host == host1
+	// 	}
+	// 	return false
+	// }
 
 	switch tr.(type) {
 	case *http.Transport:
-		tr.(*http.Transport).CloseConnection(f)
+		tr.(*http.Transport).CloseIdleConnections()
 	case *http2.Transport:
-		tr.(*http2.Transport).CloseConnection(f)
-	case *h2quic.RoundTripper:
-		tr.(*h2quic.RoundTripper).CloseConnection(f)
+		tr.(*http2.Transport).CloseIdleConnections()
+	case *http3.RoundTripper:
+		tr.(*http3.RoundTripper).Close()
 	default:
 		glog.Errorf("%T(%v) has not implement CloseConnection method", tr, tr)
 	}
