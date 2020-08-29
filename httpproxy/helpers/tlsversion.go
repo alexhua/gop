@@ -33,7 +33,7 @@ func TLSVersion(name string) uint16 {
 
 func TLSVersionName(value uint16) string {
 	switch value {
-	case tls.VersionTLS13, tls.VersionTLS13Draft18:
+	case tls.VersionTLS13:
 		return "TLSv13"
 	case tls.VersionTLS12:
 		return "TLSv12"

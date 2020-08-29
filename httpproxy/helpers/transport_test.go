@@ -5,15 +5,15 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/phuslu/net/http2"
-	"github.com/phuslu/quic-go/h2quic"
+	"golang.org/x/net/http2"
+	"github.com/lucas-clemente/quic-go/http3"
 )
 
 func TestCloseConnections(t *testing.T) {
 	tansports := []http.RoundTripper{
 		http.DefaultTransport,
 		&http2.Transport{},
-		&h2quic.RoundTripper{},
+		&http3.RoundTripper{},
 	}
 
 	type RoundTripperCloser interface {

@@ -2,7 +2,6 @@ package autoproxy
 
 import (
 	"context"
-	"io/ioutil"
 	"mime"
 	"net"
 	"net/http"
@@ -97,7 +96,7 @@ type Filter struct {
 	RegionFiltersRules   map[string]filters.RoundTripFilter
 	RegionFiltersIPRules map[string]filters.RoundTripFilter
 	RegionResolver       *helpers.Resolver
-	RegionLocator        *ip17mon.Locator
+	RegionLocator        ip17mon.Locator
 	RegionFilterCache    lrucache.Cache
 	Transport            *http.Transport
 }
@@ -184,19 +183,10 @@ func NewFilter(config *Config) (_ filters.Filter, err error) {
 	}
 
 	if f.RegionFiltersEnabled {
-		resp, err := store.Get(f.Config.RegionFilters.DataFile)
+		f.RegionLocator, err = ip17mon.New(f.Config.RegionFilters.DataFile)
 		if err != nil {
-			glog.Fatalf("AUTOPROXY: store.Get(%#v) error: %v", f.Config.RegionFilters.DataFile, err)
+			glog.Fatalf("AUTOPROXY: Get(%#v) error: %v", f.Config.RegionFilters.DataFile, err)
 		}
-		defer resp.Body.Close()
-
-		data, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			glog.Fatalf("AUTOPROXY: ioutil.ReadAll(%#v) error: %v", resp.Body, err)
-		}
-
-		f.RegionLocator = ip17mon.NewLocatorWithData(data)
-
 		f.RegionResolver = &helpers.Resolver{}
 		if config.RegionFilters.EnableRemoteDNS {
 			f.RegionResolver.DNSServer = net.ParseIP(config.RegionFilters.DNSServer)

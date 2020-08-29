@@ -75,12 +75,12 @@
 	"ForceBrotli": [
 	],
 	"TLSConfig": {
-		"Version": "TLSv1.2",
+		"Version": "TLSv1.3",
 		"ClientSessionCacheSize": 1024,
 		"Ciphers": [
 			"TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256",
 			"TLS_RSA_WITH_AES_128_CBC_SHA256",
-			"TLS_RSA_WITH_AES_256_CBC_SHA256",
+			// "TLS_RSA_WITH_AES_256_CBC_SHA256",
 			"TLS_RSA_WITH_3DES_EDE_CBC_SHA",
 		],
 		"ServerName": [
@@ -100,7 +100,7 @@
 		],
 	},
 	"GoogleG2PKP": "7HIpactkIAq2Y49orFOOQKurWxmmSFZhBCoQYcRhJ3Y=",
-	"GoogleG3PKP": "f8NnEFZxQ4ExFOhSN7EiFWtiudZQVD2oY60uauV/n78=",
+	"GoogleG3PKP": "k/9osFlVCXEMN6zIaZL/Px6YwhuMPcq8YtFSIleXxi8=",
 	"FakeOptions": {
 		"*": [
 			"Access-Control-Allow-Credentials: true",

@@ -12,9 +12,9 @@ import (
 	"net/url"
 	"time"
 
+	quic "github.com/lucas-clemente/quic-go"
+	"github.com/lucas-clemente/quic-go/http3"
 	"github.com/phuslu/glog"
-	quic "github.com/phuslu/quic-go"
-	"github.com/phuslu/quic-go/h2quic"
 )
 
 func QUIC(network, addr string, auth *Auth, forward Dialer, resolver Resolver) (Dialer, error) {
@@ -33,19 +33,15 @@ func QUIC(network, addr string, auth *Auth, forward Dialer, resolver Resolver) (
 		hostname: hostname,
 		forward:  forward,
 		resolver: resolver,
-		transport: &h2quic.RoundTripper{
+		transport: &http3.RoundTripper{
 			DisableCompression: true,
 			QuicConfig: &quic.Config{
-				HandshakeTimeout:            5 * time.Second,
-				IdleTimeout:                 10 * time.Second,
-				RequestConnectionIDOmission: true,
-				KeepAlive:                   true,
+				HandshakeTimeout: 5 * time.Second,
+				MaxIdleTimeout:   10 * time.Second,
+				KeepAlive:        true,
 			},
-			Dial: func(network, address string, tlsConfig *tls.Config, cfg *quic.Config) (quic.Session, error) {
-				return quic.DialAddr(addr, tlsConfig, cfg)
-			},
-			GetClientKey: func(_ string) string {
-				return addr
+			Dial: func(network, address string, tlsConfig *tls.Config, cfg *quic.Config) (quic.EarlySession, error) {
+				return quic.DialAddrEarly(addr, tlsConfig, cfg)
 			},
 		},
 	}
@@ -63,7 +59,7 @@ type Quic struct {
 	hostname       string
 	forward        Dialer
 	resolver       Resolver
-	transport      *h2quic.RoundTripper
+	transport      *http3.RoundTripper
 }
 
 // Dial connects to the address addr on the network net via the HTTPS proxy.
@@ -84,11 +80,11 @@ func (h *Quic) Dial(network, addr string) (net.Conn, error) {
 		},
 	}
 
-	resp, err := h.transport.RoundTripOpt(req, h2quic.RoundTripOpt{OnlyCachedConn: true})
+	resp, err := h.transport.RoundTripOpt(req, http3.RoundTripOpt{OnlyCachedConn: true})
 	if err != nil {
 		glog.Warningf("%T.RoundTripOpt(%#v) error: %+v", h.transport, req.URL.String(), err)
 		h.transport.Close()
-		resp, err = h.transport.RoundTripOpt(req, h2quic.RoundTripOpt{OnlyCachedConn: false})
+		resp, err = h.transport.RoundTripOpt(req, http3.RoundTripOpt{OnlyCachedConn: false})
 	}
 
 	if err != nil {

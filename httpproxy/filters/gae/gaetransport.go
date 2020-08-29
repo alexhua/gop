@@ -10,9 +10,9 @@ import (
 	"strings"
 	"time"
 
+	quic "github.com/lucas-clemente/quic-go"
+	"github.com/lucas-clemente/quic-go/http3"
 	"github.com/phuslu/glog"
-	quic "github.com/phuslu/quic-go"
-	"github.com/phuslu/quic-go/h2quic"
 
 	"goproxy/httpproxy/helpers"
 )
@@ -25,7 +25,7 @@ type Transport struct {
 
 type QuicBody struct {
 	quic.Stream
-	Transport   *h2quic.RoundTripper
+	Transport   *http3.RoundTripper
 	MultiDialer *helpers.MultiDialer
 }
 
@@ -48,13 +48,13 @@ func (b *QuicBody) OnError(err error) {
 }
 
 func (t *Transport) roundTripQuic(req *http.Request) (*http.Response, error) {
-	t1 := t.RoundTripper.(*h2quic.RoundTripper)
+	t1 := t.RoundTripper.(*http3.RoundTripper)
 
 	if !strings.HasSuffix(req.Host, ".appspot.com") {
 		req = req.WithContext(context.WithValue(req.Context(), "ResponseHeaderTimeout", 8*time.Second))
 	}
 
-	resp, err := t1.RoundTripOpt(req, h2quic.RoundTripOpt{OnlyCachedConn: true})
+	resp, err := t1.RoundTripOpt(req, http3.RoundTripOpt{OnlyCachedConn: true})
 
 	if err != nil {
 		if ne, ok := err.(*net.OpError); ok && ne != nil && ne.Addr != nil {
@@ -66,7 +66,7 @@ func (t *Transport) roundTripQuic(req *http.Request) (*http.Response, error) {
 		} else {
 			t1.Close()
 		}
-		resp, err = t1.RoundTripOpt(req, h2quic.RoundTripOpt{OnlyCachedConn: false})
+		resp, err = t1.RoundTripOpt(req, http3.RoundTripOpt{OnlyCachedConn: false})
 	}
 
 	if resp != nil && resp.Body != nil {
@@ -110,7 +110,7 @@ func (t *Transport) RoundTrip(req *http.Request) (*http.Response, error) {
 	var err error
 	var resp *http.Response
 
-	_, isQuic := t.RoundTripper.(*h2quic.RoundTripper)
+	_, isQuic := t.RoundTripper.(*http3.RoundTripper)
 
 	retry := t.RetryTimes
 	if req.Method != http.MethodGet && req.Header.Get("Content-Length") != "" {

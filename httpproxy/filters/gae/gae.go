@@ -17,10 +17,10 @@ import (
 
 	"github.com/cloudflare/golibs/lrucache"
 	"github.com/dsnet/compress/brotli"
+	quic "github.com/lucas-clemente/quic-go"
+	"github.com/lucas-clemente/quic-go/http3"
 	"github.com/phuslu/glog"
-	"github.com/phuslu/net/http2"
-	quic "github.com/phuslu/quic-go"
-	"github.com/phuslu/quic-go/h2quic"
+	"golang.org/x/net/http2"
 
 	"goproxy/httpproxy/filters"
 	"goproxy/httpproxy/helpers"
@@ -44,6 +44,7 @@ type Config struct {
 	EnableQuic      bool
 	EnableDeadProbe bool
 	EnableRemoteDNS bool
+	EnableDebug     bool
 	SiteToAlias     map[string]string
 	Site2Alias      map[string]string
 	HostMap         map[string][]string
@@ -129,7 +130,7 @@ func NewFilter(config *Config) (filters.Filter, error) {
 	}
 
 	googleValidator := func(cert *x509.Certificate) bool {
-		pkp := sha256.Sum256(cert.RawSubjectPublicKeyInfo)
+		pkp := sha256.Sum256(cert.SubjectKeyId)
 		return bytes.Equal(pkp[:], g2pkp) ||
 			bytes.Equal(pkp[:], g3pkp)
 	}
@@ -154,6 +155,7 @@ func NewFilter(config *Config) (filters.Filter, error) {
 			tls.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,
 		},
 	}
+	googleTLSConfig.InsecureSkipVerify = !config.TLSConfig.SSLVerify
 	if v := helpers.TLSVersion(config.TLSConfig.Version); v != 0 {
 		googleTLSConfig.MinVersion = v
 	} else {
@@ -180,7 +182,9 @@ func NewFilter(config *Config) (filters.Filter, error) {
 	if !config.DisableHTTP2 {
 		googleTLSConfig.NextProtos = []string{"h2", "http/1.1"}
 	}
-
+	if config.EnableQuic {
+		googleTLSConfig.NextProtos = []string{"h3-29", "h3-28", "h3-27"}
+	}
 	if config.Site2Alias == nil {
 		config.Site2Alias = make(map[string]string)
 	}
@@ -237,22 +241,6 @@ func NewFilter(config *Config) (filters.Filter, error) {
 		md.IPBlackList.Set(ip, struct{}{}, time.Time{})
 	}
 
-	GetHostnameCacheKey := func(addr string) string {
-		var host, port string
-		var err error
-		host, port, err = net.SplitHostPort(addr)
-		if err != nil {
-			host = addr
-			port = "443"
-		}
-
-		if alias, ok := md.SiteToAlias.Lookup(host); ok {
-			addr = net.JoinHostPort(alias.(string), port)
-		}
-
-		return addr
-	}
-
 	tr := &Transport{
 		MultiDialer: md,
 		RetryTimes:  2,
@@ -265,7 +253,6 @@ func NewFilter(config *Config) (filters.Filter, error) {
 		ResponseHeaderTimeout: time.Duration(config.Transport.ResponseHeaderTimeout) * time.Second,
 		IdleConnTimeout:       time.Duration(config.Transport.IdleConnTimeout) * time.Second,
 		MaxIdleConnsPerHost:   config.Transport.MaxIdleConnsPerHost,
-		GetConnectMethodAddr:  GetHostnameCacheKey,
 	}
 
 	if config.Transport.Proxy.Enabled {
@@ -296,17 +283,15 @@ func NewFilter(config *Config) (filters.Filter, error) {
 
 	switch {
 	case config.EnableQuic:
-		tr.RoundTripper = &h2quic.RoundTripper{
+		tr.RoundTripper = &http3.RoundTripper{
 			DisableCompression: true,
 			TLSClientConfig:    md.GoogleTLSConfig,
 			QuicConfig: &quic.Config{
-				HandshakeTimeout:            md.Timeout,
-				IdleTimeout:                 md.Timeout,
-				RequestConnectionIDOmission: true,
-				KeepAlive:                   true,
+				HandshakeTimeout: md.Timeout,
+				MaxIdleTimeout:   md.Timeout,
+				KeepAlive:        true,
 			},
-			Dial:         md.DialQuic,
-			GetClientKey: GetHostnameCacheKey,
+			Dial: md.DialQuic,
 		}
 	case config.DisableHTTP2 && config.ForceHTTP2:
 		glog.Fatalf("GAE: DisableHTTP2=%v and ForceHTTP2=%v is conflict!", config.DisableHTTP2, config.ForceHTTP2)
@@ -445,7 +430,7 @@ func NewFilter(config *Config) (filters.Filter, error) {
 		GAETransport: &GAETransport{
 			Transport:   tr,
 			MultiDialer: md,
-			Servers:     NewServers(urls, config.Password, config.SSLVerify),
+			Servers:     NewServers(urls, config.Password, config.SSLVerify, config.EnableDebug),
 			Deadline:    time.Duration(config.Transport.ResponseHeaderTimeout-2) * time.Second,
 			RetryDelay:  time.Duration(config.Transport.RetryDelay*1000) * time.Millisecond,
 			RetryTimes:  config.Transport.RetryTimes,
@@ -598,7 +583,7 @@ func (f *Filter) RoundTrip(ctx context.Context, req *http.Request) (context.Cont
 	if resp != nil && resp.Header != nil {
 		resp.Header.Del("Alt-Svc")
 		resp.Header.Del("Alternate-Protocol")
-		if resp.Header.Get("Content-Encoding") == "br" && !strings.Contains(resp.Request.Header.Get("Accept-Encoding"), "br") {
+		if resp.Header.Get("Content-Encoding") == "br" && !strings.Contains(req.Header.Get("Accept-Encoding"), "br") {
 			r, err := brotli.NewReader(resp.Body, nil)
 			if err != nil {
 				return ctx, nil, err

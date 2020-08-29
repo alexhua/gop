@@ -28,14 +28,16 @@ type Servers struct {
 	urls2     []url.URL
 	password  string
 	sslVerify bool
+	debug     bool
 }
 
-func NewServers(urls []url.URL, password string, sslVerify bool) *Servers {
+func NewServers(urls []url.URL, password string, sslVerify bool, debug bool) *Servers {
 	server := &Servers{
 		urls1:     urls,
 		urls2:     []url.URL{},
 		password:  password,
 		sslVerify: sslVerify,
+		debug:     debug,
 	}
 	server.curURL.Store(server.urls1[0])
 	return server
@@ -84,6 +86,9 @@ func (s *Servers) EncodeRequest(req *http.Request, fetchserver url.URL, deadline
 	}
 	if s.sslVerify {
 		options += ",sslverify"
+	}
+	if s.debug {
+		options += ",debug"
 	}
 
 	fmt.Fprintf(w, "%s %s HTTP/1.1\r\n", req.Method, req.URL.String())

@@ -402,10 +402,10 @@ function clean() {
 }
 
 init_github
-build_go
+# build_go
 build_glog
-build_http2
-build_bogo
+# build_http2
+# build_bogo
 build_quicgo
 build_goproxy
 if [ "x${TRAVIS_EVENT_TYPE}" == "xpush" ]; then

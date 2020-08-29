@@ -10,7 +10,7 @@ import (
 
 	"github.com/cloudflare/golibs/lrucache"
 	"github.com/phuslu/glog"
-	"github.com/phuslu/net/http2"
+	"golang.org/x/net/http2"
 
 	"goproxy/httpproxy/filters"
 	"goproxy/httpproxy/helpers"

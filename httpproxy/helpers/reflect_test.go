@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/phuslu/quic-go/h2quic"
+	"github.com/lucas-clemente/quic-go/http3"
 )
 
 func TestReflectRemoteAddrFromResponseHTTP(t *testing.T) {
@@ -44,7 +44,7 @@ func TestReflectRemoteAddrFromResponseHTTPS(t *testing.T) {
 func TestReflectRemoteAddrFromResponseQuic(t *testing.T) {
 	u := "https://www.google.cn"
 	req, _ := http.NewRequest(http.MethodGet, u, nil)
-	resp, err := (&h2quic.RoundTripper{
+	resp, err := (&http3.RoundTripper{
 		DisableCompression: true,
 	}).RoundTrip(req)
 	if err != nil {

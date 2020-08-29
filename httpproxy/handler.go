@@ -129,7 +129,7 @@ func (h Handler) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if resp.Header.Get("Content-Length") == "" && resp.ContentLength >= 0 {
+	if resp.Header.Get("Content-Length") == "" && resp.ContentLength > 0 {
 		resp.Header.Set("Content-Length", strconv.FormatInt(resp.ContentLength, 10))
 	}
 	for key, values := range resp.Header {
