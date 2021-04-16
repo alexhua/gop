@@ -265,15 +265,15 @@ func (d *MultiDialer) DialQuic(network, address string, tlsConfig *tls.Config, c
 		tlsConfig = &tls.Config{
 			InsecureSkipVerify: !d.SSLVerify,
 			ServerName:         address,
-			NextProtos:         []string{"h3-29", "h3-28", "h3-27"},
+			NextProtos:         []string{"h3-29", "h3-32", "h3-34"},
 		}
 	}
 
 	if cfg == nil {
 		cfg = &quic.Config{
-			HandshakeTimeout: d.Timeout,
-			MaxIdleTimeout:   d.Timeout,
-			KeepAlive:        true,
+			HandshakeIdleTimeout: d.Timeout,
+			MaxIdleTimeout:       d.Timeout,
+			KeepAlive:            true,
 		}
 	}
 
@@ -287,16 +287,16 @@ func (d *MultiDialer) DialQuic(network, address string, tlsConfig *tls.Config, c
 				switch {
 				case strings.HasPrefix(alias, "google_"):
 					config = &quic.Config{
-						HandshakeTimeout: d.Timeout,
-						MaxIdleTimeout:   d.Timeout,
-						KeepAlive:        true,
+						HandshakeIdleTimeout: d.Timeout,
+						MaxIdleTimeout:       d.Timeout,
+						KeepAlive:            true,
 					}
 					isGoogleAddr = true
 				case cfg == nil:
 					config = &quic.Config{
-						HandshakeTimeout: d.Timeout,
-						MaxIdleTimeout:   d.Timeout,
-						KeepAlive:        true,
+						HandshakeIdleTimeout: d.Timeout,
+						MaxIdleTimeout:       d.Timeout,
+						KeepAlive:            true,
 					}
 				default:
 					config = cfg

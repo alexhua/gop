@@ -183,7 +183,7 @@ func NewFilter(config *Config) (filters.Filter, error) {
 		googleTLSConfig.NextProtos = []string{"h2", "http/1.1"}
 	}
 	if config.EnableQuic {
-		googleTLSConfig.NextProtos = []string{"h3-29", "h3-28", "h3-27"}
+		googleTLSConfig.NextProtos = []string{"h3-29", "h3-32", "h3-34"}
 	}
 	if config.Site2Alias == nil {
 		config.Site2Alias = make(map[string]string)
@@ -287,9 +287,9 @@ func NewFilter(config *Config) (filters.Filter, error) {
 			DisableCompression: true,
 			TLSClientConfig:    md.GoogleTLSConfig,
 			QuicConfig: &quic.Config{
-				HandshakeTimeout: md.Timeout,
-				MaxIdleTimeout:   md.Timeout,
-				KeepAlive:        true,
+				HandshakeIdleTimeout: md.Timeout,
+				MaxIdleTimeout:       md.Timeout,
+				KeepAlive:            true,
 			},
 			Dial: md.DialQuic,
 		}

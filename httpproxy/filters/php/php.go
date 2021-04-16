@@ -112,6 +112,7 @@ func NewFilter(config *Config) (filters.Filter, error) {
 		},
 		TLSHandshakeTimeout: time.Duration(config.Transport.TLSHandshakeTimeout) * time.Second,
 		MaxIdleConnsPerHost: config.Transport.MaxIdleConnsPerHost,
+		ForceAttemptHTTP2:   true,
 	}
 
 	if config.Transport.Proxy.Enabled {

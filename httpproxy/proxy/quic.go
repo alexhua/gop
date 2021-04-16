@@ -36,9 +36,9 @@ func QUIC(network, addr string, auth *Auth, forward Dialer, resolver Resolver) (
 		transport: &http3.RoundTripper{
 			DisableCompression: true,
 			QuicConfig: &quic.Config{
-				HandshakeTimeout: 5 * time.Second,
-				MaxIdleTimeout:   10 * time.Second,
-				KeepAlive:        true,
+				HandshakeIdleTimeout: 5 * time.Second,
+				MaxIdleTimeout:       10 * time.Second,
+				KeepAlive:            true,
 			},
 			Dial: func(network, address string, tlsConfig *tls.Config, cfg *quic.Config) (quic.EarlySession, error) {
 				return quic.DialAddrEarly(addr, tlsConfig, cfg)
